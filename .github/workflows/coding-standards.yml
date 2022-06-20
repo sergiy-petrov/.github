@@ -8,6 +8,11 @@ on:
         default: "8.0"
         required: false
         type: "string"
+      php-extensions:
+        description: "The php extensions to install, allowing composer to pass"
+        default: "none, ctype, dom, json, mbstring, phar, simplexml, tokenizer, xml, xmlwriter, fileinfo"
+        required: false
+        type: "string"
       composer-root-version:
         description: "The version of the package being tested, in case of circular dependencies."
         required: false
@@ -37,6 +42,7 @@ jobs:
         with:
           coverage: "none"
           php-version: "${{ matrix.php-version }}"
+          extensions: "${{ inputs.php-extensions }}"
           tools: "cs2pr"
 
       - name: "Set COMPOSER_ROOT_VERSION"
