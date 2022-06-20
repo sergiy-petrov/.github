@@ -1,4 +1,4 @@
-name: "Coding Standards"
+name: "Code coverage"
 
 on:
   workflow_call:
@@ -29,31 +29,19 @@ on:
         type: "string"
 
 jobs:
-  coding-standards:
-    name: "Coding Standards"
-    runs-on: "ubuntu-20.04"
-
-    strategy:
-      matrix:
-        php-version:
-          - "${{ inputs.php-version }}"
-
+  code-coverage:
+    name: "Code Coverage"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
 
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
+      - name: "Set up PHP"
+        uses: "shivammathur/setup-php@2.18.0"
         with:
-          coverage: "none"
-          php-version: "${{ matrix.php-version }}"
+          coverage: "xdebug"
           extensions: "${{ inputs.php-extensions }}"
-          tools: "cs2pr"
-
-      - name: "Set COMPOSER_ROOT_VERSION"
-        run: |
-          echo "COMPOSER_ROOT_VERSION=${{ inputs.composer-root-version }}" >> $GITHUB_ENV
-        if: "${{ inputs.composer-root-version }}"
+          php-version: "${{ inputs.php-version }}"
 
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v1"
@@ -61,11 +49,7 @@ jobs:
           dependency-versions: "${{ inputs.composer-dependencies }}"
           composer-options: "${{ inputs.composer-options }}"
 
-      - name: "Code style check"
-        uses: "phpDocumentor/coding-standard@latest"
-        continue-on-error: true
-        with:
-          args: "-q --no-colors --report-checkstyle=./phpcs-report.xml"
-
-      - name: "Show PHPCS results in PR"
-        run: "cs2pr ./phpcs-report.xml"
+      - name: "Collect code coverage with Xdebug and phpunit/phpunit"
+        env:
+          XDEBUG_MODE: "coverage"
+        run: "vendor/bin/phpunit --colors=always --coverage-clover=.build/phpunit/logs/clover.xml"
