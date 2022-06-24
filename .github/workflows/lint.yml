@@ -1,0 +1,43 @@
+name: "Lint"
+
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        description: "The PHP version to use when running the job"
+        default: "8.0"
+        required: false
+        type: "string"
+
+jobs:
+
+  lint:
+    name: "Lint yaml & Composer"
+
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      matrix:
+        php-version:
+          - "${{ inputs.php-version }}"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "Lint YAML files"
+        uses: "ibiqlik/action-yamllint@v3.1"
+        with:
+          config_file: ".yamllint.yaml"
+          file_or_dir: "."
+          strict: true
+
+      - name: "Set up PHP"
+        uses: "shivammathur/setup-php@2.18.0"
+        with:
+          coverage: "none"
+          extensions: "none, ctype, dom, json, mbstring, phar, simplexml, tokenizer, xml, xmlwriter, fileinfo"
+          php-version: "${{ matrix.php-version }}"
+
+      - name: "Validate composer.json and composer.lock"
+        run: "composer validate --ansi --strict"

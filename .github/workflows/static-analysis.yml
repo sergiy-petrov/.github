@@ -1,0 +1,74 @@
+name: "Code coverage"
+
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        description: "The PHP version to use when running the job"
+        default: "8.0"
+        required: false
+        type: "string"
+      php-extensions:
+        description: "The php extensions to install, allowing composer to pass"
+        default: "none, ctype, dom, json, mbstring, phar, simplexml, tokenizer, xml, xmlwriter, fileinfo"
+        required: false
+        type: "string"
+      composer-root-version:
+        description: "The version of the package being tested, in case of circular dependencies."
+        required: false
+        type: "string"
+      composer-options:
+        description: "Additional flags for the composer install command."
+        default: "--prefer-dist"
+        required: false
+        type: "string"
+      composer-dependencies:
+        description: "Composer dependency level to install"
+        default: "locked"
+        required: false
+        type: "string"
+
+jobs:
+  static-code-analysis:
+    name: "Static Code Analysis"
+
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      matrix:
+        php-version:
+          - "${{ inputs.php-version }}"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: "${{ inputs.php-extensions }}"
+
+      - name: "Set COMPOSER_ROOT_VERSION"
+        run: |
+          echo "COMPOSER_ROOT_VERSION=${{ inputs.composer-root-version }}" >> $GITHUB_ENV
+        if: "${{ inputs.composer-root-version }}"
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: "${{ inputs.composer-dependencies }}"
+          composer-options: "${{ inputs.composer-options }}"
+
+      - name: "Create cache directory for phpstan/phpstan"
+        run: "mkdir -p .build/phpstan"
+
+      - name: "Run phpstan/phpstan"
+        run: "vendor/bin/phpstan --configuration=phpstan.neon --memory-limit=-1"
+
+      - name: "Create cache directory for vimeo/psalm"
+        run: "mkdir -p .build/psalm"
+
+      - name: "Run vimeo/psalm"
+        run: "vendor/bin/psalm --config=psalm.xml --output-format=github --shepherd --show-info=false --stats --threads=4"
