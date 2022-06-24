@@ -8,7 +8,16 @@ on: # yamllint disable-line rule:truthy
         default: "8.0"
         required: false
         type: "string"
-
+      composer-options:
+        description: "Additional flags for the composer validate command."
+        default: "--ansi --strict"
+        required: false
+        type: "string"
+      composer-file:
+        description: "Composer file to validate."
+        default: "composer.json"
+        required: false
+        type: "string"
 jobs:
 
   lint:
@@ -40,4 +49,4 @@ jobs:
           php-version: "${{ matrix.php-version }}"
 
       - name: "Validate composer.json and composer.lock"
-        run: "composer validate --ansi --strict"
+        run: "composer validate ${{ inputs.composer-options }} ${{ inputs.composer-file }}"
