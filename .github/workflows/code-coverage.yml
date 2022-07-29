@@ -43,6 +43,11 @@ jobs:
           extensions: "${{ inputs.php-extensions }}"
           php-version: "${{ inputs.php-version }}"
 
+      - name: "Set COMPOSER_ROOT_VERSION"
+        run: |
+          echo "COMPOSER_ROOT_VERSION=${{ inputs.composer-root-version }}" >> $GITHUB_ENV
+        if: "${{ inputs.composer-root-version }}"
+
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v1"
         with:
