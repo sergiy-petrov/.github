@@ -63,6 +63,8 @@ jobs:
         with:
           dependency-versions: "${{ inputs.composer-dependencies }}"
           composer-options: "${{ inputs.composer-options }}"
+          # Bust the cache at least once a month - output format: YYYY-MM.
+          custom-cache-suffix: $(date -u "+%Y-%m")
 
       - name: "Run tests with phpunit/phpunit"
         run: "vendor/bin/phpunit --colors=always --testsuite=${{ inputs.test-suite }}"
