@@ -10,7 +10,7 @@ on: # yamllint disable-line rule:truthy
         type: "string"
       php-extensions:
         description: "The php extensions to install, allowing composer to pass"
-        default: "none, ctype, dom, json, mbstring, phar, simplexml, tokenizer, xml, xmlwriter, fileinfo"
+        default: "none, ctype, dom, json, mbstring, phar, simplexml, tokenizer, xml, xmlwriter, fileinfo, pcntl, posix, opcache"
         required: false
         type: "string"
       composer-root-version:
