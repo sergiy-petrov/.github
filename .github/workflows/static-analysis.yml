@@ -61,7 +61,7 @@ jobs:
           dependency-versions: "${{ inputs.composer-dependencies }}"
           composer-options: "${{ inputs.composer-options }}"
           # Bust the cache at least once a month - output format: YYYY-MM.
-          custom-cache-suffix: $(date -u "+%Y-%m")
+          custom-cache-suffix: $(date -u "+%Y-%m") # yamllint disable-line rule:quoted-strings
 
       - name: "Create cache directory for phpstan/phpstan"
         run: "mkdir -p .build/phpstan"
