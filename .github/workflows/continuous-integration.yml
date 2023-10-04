@@ -5,7 +5,7 @@ on: # yamllint disable-line rule:truthy
     inputs:
       php-versions:
         description: "The PHP versions to use when running the job"
-        default: "['7.4', '8.0', '8.1']"
+        default: "['7.4', '8.0', '8.1', '8.2', '8.3']"
         required: false
         type: "string"
       php-extensions:
