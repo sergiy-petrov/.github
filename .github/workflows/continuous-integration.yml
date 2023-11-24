@@ -52,6 +52,7 @@ jobs:
           detectedExtensions: "${{ join(fromJson(steps.supported-versions-detect.outputs.version), ',') }}"
 
         id: "supported-versions-matrix"
+        shell: "bash"
         run: |
           echo "version=[[ $inputVersions != "auto-detect" ]] $detected-versions || $inputVersions " >> $GITHUB_ENV
           echo "extensions=[[ $inputVersions != "auto-detect" ]] $detectedExtensions || $inputExtensions " >> $GITHUB_ENV
