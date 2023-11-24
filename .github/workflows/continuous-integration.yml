@@ -43,19 +43,17 @@ jobs:
         if: "${{ inputs.php-versions == 'auto-detect' }}"
         uses: "WyriHaximus/github-action-composer-php-versions-in-range@v1"
 
-
       - name: "Set PHP versions"
-        with:
+        env:
           inputVersions: "${{ inputs.php-versions }}"
           inputExtensions: "${{ inputs.php-extensions }}"
-          detectedVersions: "${{ steps.supported-versions-detect.outputs.versions }}"
-          detectedExtensions: "${{ join(fromJson(steps.supported-versions-detect.outputs.version), ',') }}"
-
+          detectedVersions: "${{ steps.supported-versions-detect.outputs.version }}"
+          detectedExtensions: "${{ steps.supported-versions-detect.outputs.extensions }}"
         id: "supported-versions-matrix"
         shell: "bash"
         run: |
-          echo "version=[[ $inputVersions != "auto-detect" ]] $detected-versions || $inputVersions " >> $GITHUB_ENV
-          echo "extensions=[[ $inputVersions != "auto-detect" ]] $detectedExtensions || $inputExtensions " >> $GITHUB_ENV
+          ([[ $inputVersions == "auto-detect" ]] && echo "extensions=$detectedExtensions" || echo "extensions=$inputExtensions") >> $GITHUB_OUTPUT
+          ([[ $inputVersions == "auto-detect" ]] && echo "version=$detectedVersions" || echo "version=$inputVersions") >> $GITHUB_OUTPUT
 
   tests:
     name: "Tests"
