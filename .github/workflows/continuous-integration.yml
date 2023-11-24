@@ -5,7 +5,7 @@ on: # yamllint disable-line rule:truthy
     inputs:
       php-versions:
         description: "The PHP versions to use when running the job"
-        default: "['7.4', '8.0', '8.1', '8.2', '8.3']"
+        default: "auto-detect"
         required: false
         type: "string"
       php-extensions:
@@ -29,14 +29,42 @@ on: # yamllint disable-line rule:truthy
         type: "string"
 
 jobs:
+  supported-versions-matrix:
+    name: "Supported Versions Matrix"
+    runs-on: "ubuntu-latest"
+    outputs:
+      extensions: "${{ steps.supported-versions-matrix.outputs.extensions }}"
+      version: "${{ steps.supported-versions-matrix.outputs.version }}"
+    steps:
+      - uses: "actions/checkout@v4"
+        if: "${{ inputs.php-versions == 'auto-detect' }}"
+
+      - id: "supported-versions-detect"
+        if: "${{ inputs.php-versions == 'auto-detect' }}"
+        uses: "WyriHaximus/github-action-composer-php-versions-in-range@v1"
+
+
+      - name: "Set PHP versions"
+        with:
+          inputVersions: "${{ inputs.php-versions }}"
+          inputExtensions: "${{ inputs.php-extensions }}"
+          detectedVersions: "${{ steps.supported-versions-detect.outputs.versions }}"
+          detectedExtensions: "${{ join(fromJson(steps.supported-versions-detect.outputs.version), ',') }}"
+
+        id: "supported-versions-matrix"
+        run: |
+          echo "version=[[ $inputVersions != "auto-detect" ]] $detected-versions || $inputVersions " >> $GITHUB_ENV
+          echo "extensions=[[ $inputVersions != "auto-detect" ]] $detectedExtensions || $inputExtensions " >> $GITHUB_ENV
+
   tests:
     name: "Tests"
 
     runs-on: "ubuntu-latest"
 
+    needs: "supported-versions-matrix"
     strategy:
       matrix:
-        php-version: "${{ fromJson(inputs.php-versions) }}"
+        php-version: "${{ fromJson(needs.supported-versions-matrix.outputs.version) }}"
         dependencies:
           - "lowest"
           - "locked"
