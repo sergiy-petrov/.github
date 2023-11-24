@@ -4,10 +4,15 @@ on: # yamllint disable-line rule:truthy
   workflow_call:
     inputs:
       php-versions:
-        description: "The PHP versions to use when running the job"
+        description: "The PHP versions to use when running the job, omitt to auto-detect"
         default: "auto-detect"
         required: false
         type: "string"
+      upcoming-releases:
+        description: "Whether to include upcoming releases in the auto-detection"
+        default: true
+        required: false
+        type: "boolean"
       php-extensions:
         description: "The php extensions to install, allowing composer to pass"
         default: "none, ctype, dom, json, mbstring, phar, simplexml, tokenizer, xml, xmlwriter, fileinfo"
@@ -42,6 +47,8 @@ jobs:
       - id: "supported-versions-detect"
         if: "${{ inputs.php-versions == 'auto-detect' }}"
         uses: "WyriHaximus/github-action-composer-php-versions-in-range@v1"
+        with:
+          upcomingReleases: "${{ inputs.upcoming-releases }}"
 
       - name: "Set PHP versions"
         env:
