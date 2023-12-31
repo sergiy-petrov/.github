@@ -92,6 +92,10 @@ jobs:
           echo "COMPOSER_ROOT_VERSION=${{ inputs.composer-root-version }}" >> $GITHUB_ENV
         if: "${{ inputs.composer-root-version }}"
 
+      - name: "Remove platform requirement"
+        run: "composer config --unset platform"
+        if: "${{ matrix.dependencies == 'highest' }}"
+
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
         with:
