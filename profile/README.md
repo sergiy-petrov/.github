@@ -1,5 +1,3 @@
-# phpDocumentor
-
 The phpDocumentor organization maintains a group of projects 
 that aim to provide the PHP community with a set of high quality
 documentation tools. We are building phpDocumentor to generate
