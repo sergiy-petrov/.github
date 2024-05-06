@@ -73,4 +73,9 @@ jobs:
         run: "mkdir -p .build/psalm"
 
       - name: "Run vimeo/psalm"
+        if: "${{ hashFiles('vendor/bin/psalm') != '' }}"
         run: "vendor/bin/psalm --config=psalm.xml --output-format=github --shepherd --show-info=false --stats --threads=4"
+
+      - name: "Run vimeo/psalm"
+        if: "${{ hashFiles('vendor/bin/psalm.phar') != '' }}"
+        run: "vendor/bin/psalm.phar --config=psalm.xml --output-format=github --shepherd --show-info=false --stats --threads=4"
