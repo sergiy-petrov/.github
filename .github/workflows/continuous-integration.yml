@@ -49,6 +49,7 @@ jobs:
         uses: "WyriHaximus/github-action-composer-php-versions-in-range@v1"
         with:
           upcomingReleases: "${{ inputs.upcoming-releases }}"
+          nightly: "${{ inputs.upcoming-releases }}"
 
       - name: "Set PHP versions"
         env:
