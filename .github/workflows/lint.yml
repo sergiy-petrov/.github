@@ -47,7 +47,7 @@ jobs:
           strict: true
 
       - name: "Set up PHP"
-        uses: "shivammathur/setup-php@2.34.0"
+        uses: "shivammathur/setup-php@2.34.1"
         with:
           coverage: "none"
           extensions: "${{ inputs.php-extensions }}"
