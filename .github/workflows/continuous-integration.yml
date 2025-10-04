@@ -106,4 +106,4 @@ jobs:
           custom-cache-suffix: $(date -u "+%Y-%m") # yamllint disable-line rule:quoted-strings
 
       - name: "Run tests with phpunit/phpunit"
-        run: "vendor/bin/phpunit --colors=always --testsuite=${{ inputs.test-suite }} --no-coverage" 
+        run: "vendor/bin/phpunit --colors=always --testsuite=${{ inputs.test-suite }} --no-coverage"
